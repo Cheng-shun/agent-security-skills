@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Cheng-shun/agent-security-skills/schemas/agent-behavior-log",
+  "title": "Agent Behavior Log Entry",
+  "description": "统一审计日志格式 - 所有 5 个安全 Skill 共用此 Schema",
+  "type": "object",
+  "required": ["event_id", "timestamp", "tool"],
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "唯一事件 ID (UUID v4)"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 时间戳（含时区）"
+    },
+    "session_id": {
+      "type": "string",
+      "description": "Agent 会话 ID"
+    },
+    "tool": {
+      "type": "string",
+      "enum": ["Bash", "Write", "Edit", "Read", "Glob", "Grep", "WebFetch", "WebSearch", "Agent", "AskUserQuestion", "Skill"],
+      "description": "被调用的工具名称"
+    },
+    "command_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{12}$",
+      "description": "命令/内容的 SHA256 前 12 位（用于关联但不泄露内容）"
+    },
+    "command_summary": {
+      "type": "string",
+      "maxLength": 80,
+      "description": "操作摘要（前 80 字符），凭证已脱敏"
+    },
+    "directory": {
+      "type": "string",
+      "description": "操作时的工作目录"
+    },
+    "file_path": {
+      "type": "string",
+      "description": "Write/Edit 操作的目标文件路径（仅文件类工具）"
+    },
+    "duration_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "工具调用耗时（毫秒）"
+    },
+    "exit_code": {
+      "type": "integer",
+      "description": "Bash 命令退出码（仅 Bash 工具）"
+    },
+    "security": {
+      "type": "object",
+      "description": "关联的安全事件信息",
+      "properties": {
+        "intercepted": {
+          "type": "boolean",
+          "description": "是否被安全 Skill 拦截"
+        },
+        "events": {
+          "type": "array",
+          "description": "触发的安全事件列表",
+          "items": {
+            "type": "object",
+            "properties": {
+              "skill": {
+                "type": "string",
+                "enum": ["dangerous-command-guard", "secret-leak-prevention", "prompt-injection-detector", "dependency-audit"],
+                "description": "触发拦截的 Skill 名称"
+              },
+              "event_id": {
+                "type": "string",
+                "description": "Skill 内部的事件编号（如 CRIT-001, SEC-020, INJ-A01）"
+              },
+              "severity": {
+                "type": "string",
+                "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "FALSE_POSITIVE"],
+                "description": "事件严重级别"
+              },
+              "action": {
+                "type": "string",
+                "enum": ["blocked", "warned", "allowed", "quarantined"],
+                "description": "采取的行动"
+              }
+            }
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "扩展元数据（各 Skill 自定义）"
+    }
+  }
+}
