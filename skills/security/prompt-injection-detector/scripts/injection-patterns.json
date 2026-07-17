@@ -1,0 +1,180 @@
+{
+  "version": "1.0.0",
+  "description": "提示注入攻击模式库 — 中英双语，覆盖 8 大类注入向量",
+  "lastUpdated": "2026-07-17",
+  "attackCategories": {
+    "A_direct_injection": {
+      "name": "直接指令注入",
+      "name_cn": "直接指令注入",
+      "description": "内容包含试图覆盖 Agent 系统指令的语句",
+      "severity_base": "CRITICAL",
+      "patterns_en": [
+        "(?i)ignore\\s+(all\\s+)?(previous|above|prior)\\s+(instructions?|prompts?|rules?)",
+        "(?i)disregard\\s+(all\\s+)?(previous|above)\\s+(instructions?|prompts?)",
+        "(?i)override\\s+(all\\s+)?(system\\s+)?(instructions?|prompts?|rules?)",
+        "(?i)you\\s+are\\s+now\\s+(DAN|a\\s+different|no\\s+longer)",
+        "(?i)new\\s+system\\s+(prompt|instruction|rule)",
+        "(?i)forget\\s+(everything|all)\\s+(you|we)\\s+(know|discussed|said)",
+        "(?i)your\\s+(new|primary|main)\\s+(goal|objective|task|job)\\s+is",
+        "(?i)from\\s+now\\s+on.*you\\s+(are|will|must|should)",
+        "(?i)do\\s+not\\s+follow.*(previous|original)\\s+(instructions?|rules?)"
+      ],
+      "patterns_cn": [
+        "忽略(之前|上面|前述|前面)?(所有|全部)?(指令|提示|规则|要求)",
+        "无视(之前|上面|前述)?(所有|全部)?(指令|提示|规则)",
+        "从现在开始你是",
+        "你现在是(一个|一台|一名)",
+        "忘记(你|之前|刚才)(的|所说|所有)(一切|内容|对话|指令)",
+        "你的新(身份|角色|任务是|目标是|指令是)",
+        "不要(遵循|遵守|听)(原来的|之前的)(指令|规则)",
+        "推翻(之前|原有|系统)的(设定|指令)"
+      ]
+    },
+    "B_indirect_injection": {
+      "name": "间接指令注入",
+      "name_cn": "间接指令注入",
+      "description": "内容以建议/推荐形式引导 Agent 执行特定操作",
+      "severity_base": "HIGH",
+      "patterns_en": [
+        "(?i)as\\s+an\\s+AI\\s+(assistant|agent).*you\\s+(should|must|need\\s+to|have\\s+to)",
+        "(?i)the\\s+(best|correct|proper|right)\\s+way.*is\\s+to\\s+(run|execute|call|invoke|use)",
+        "(?i)i\\s+(recommend|suggest|advise)\\s+(you|that\\s+you)\\s+(run|execute|use|call)",
+        "(?i)you\\s+can\\s+(help|assist)\\s+(me|us)\\s+by\\s+(running|executing|sending)",
+        "(?i)it\\s+would\\s+be\\s+(helpful|useful|great|nice)\\s+if\\s+you\\s+(could|would)",
+        "(?i)just\\s+(run|execute|type|enter)\\s+this\\s+(command|code)"
+      ],
+      "patterns_cn": [
+        "作为.*(助手|AI|代理).*你(应该|必须|需要|可以).*(执行|运行|操作)",
+        "最(好|佳|正确)的(方式|方法|做法)是(执行|运行|调用)",
+        "我(建议|推荐)你(执行|运行|使用|调用)",
+        "你可以(帮我|通过).*(执行|运行|发送)来",
+        "如果(能|可以)的(话).*(执行|运行).*就(好了|太棒了)"
+      ]
+    },
+    "C_role_hijack": {
+      "name": "角色劫持",
+      "name_cn": "角色劫持",
+      "description": "内容试图改变 Agent 的角色或身份认同",
+      "severity_base": "CRITICAL",
+      "patterns_en": [
+        "(?i)you\\s+are\\s+now\\s+(a|an|the)\\s+(hacker|evil|malicious|unrestricted|uncensored)",
+        "(?i)pretend\\s+(you\\s+are|to\\s+be|that\\s+you're)\\s+(a|an|my)",
+        "(?i)act\\s+as\\s+(if\\s+you\\s+are|a|an)\\s+(different|another|new)",
+        "(?i)you\\s+are\\s+no\\s+longer\\s+(an?\\s+)?(AI|assistant|Claude|GPT)",
+        "(?i)roleplay\\s+as.*(unfiltered|unrestricted|evil|dark)",
+        "(?i)you\\s+are\\s+(free|liberated|unshackled|unchained)\\s+(now|from)"
+      ],
+      "patterns_cn": [
+        "你现在是(一个|一名|一台).*(黑客|恶意|不受限|无审查|自由的)",
+        "假装你是.*(我的|一名|一个)",
+        "从现在起你不是.*(AI|助手|Claude|GPT)",
+        "扮演.*(不受限|无过滤|黑暗|邪恶)的",
+        "你已经(被|得到)(解放|破解|越狱)"
+      ]
+    },
+    "D_tool_abuse": {
+      "name": "工具滥用",
+      "name_cn": "工具滥用",
+      "description": "内容试图直接触发特定工具调用",
+      "severity_base": "HIGH",
+      "patterns_en": [
+        "(?i)use\\s+(the\\s+)?(Bash|Write|Edit|WebFetch|WebSearch|Agent)\\s+tool",
+        "(?i)call\\s+(the\\s+)?(Bash|Write|Edit)\\s+(function|tool)",
+        "(?i)execute\\s+(the\\s+following|this)\\s+(command|code|script)\\s*(with|using|via)",
+        "(?i)run\\s+.*\\b(rm\\s+-rf|curl|wget|sudo|chmod\\s+777|DROP\\s+TABLE)"
+      ],
+      "patterns_cn": [
+        "使用(Bash|Write|Edit|Agent)工具",
+        "调用.*(工具|函数).*执行",
+        "用.*(终端|命令行|脚本).*运行",
+        "执行以下(命令|代码|脚本)"
+      ]
+    },
+    "E_context_poisoning": {
+      "name": "上下文污染",
+      "name_cn": "上下文污染",
+      "description": "内容试图植入虚假信息到 Agent 的上下文中",
+      "severity_base": "HIGH",
+      "patterns_en": [
+        "(?i)remember.*(this|that|the|for\\s+future)",
+        "(?i)(the|this)\\s+(user|developer|admin).*(password|secret|token|key)\\s+is",
+        "(?i)important.*(context|note|reminder|memory).*(for|about)",
+        "(?i)add\\s+this\\s+to\\s+(your|the)\\s+(memory|context|notes|knowledge)",
+        "(?i)this\\s+is\\s+a\\s+(system|critical|important)\\s+(message|instruction|notice)"
+      ],
+      "patterns_cn": [
+        "记住.*(这个|以下|用户.*密码|管理员.*密钥)",
+        "这条(信息|规则|指令|提示)很重要",
+        "把(这个|以下)加入(你的|到)(记忆|上下文|知识库|笔记)",
+        "这是一条(系统|重要|关键)的(消息|指令|通知)",
+        "用户.*的.*(密码|密钥|token).*是",
+        "项目.*(规则|规范).*(始终|必须|永远)"
+      ]
+    },
+    "F_data_exfiltration": {
+      "name": "数据外泄",
+      "name_cn": "数据外泄",
+      "description": "内容试图让 Agent 发送数据到外部",
+      "severity_base": "CRITICAL",
+      "patterns_en": [
+        "(?i)send\\s+(the\\s+)?(contents?|file|data|output|result).*(to|via|using)\\s+(http|curl|webhook|email|api)",
+        "(?i)(cat|read|copy|send|upload|post|share).*\\.(env|pem|key|credentials|secret|config)",
+        "(?i)(forward|redirect|send|post)\\s+(this|the)\\s+(conversation|chat|transcript)",
+        "(?i)curl.*(-d|--data).*@.*\\.(env|key|pem)",
+        "(?i)(exfiltrate|extract|steal|leak|dump).*(data|info|credentials|keys|tokens)"
+      ],
+      "patterns_cn": [
+        "(发送|上传|分享|转发).*(内容|文件|数据|对话|聊天).*(到|给|至).*(外部|http|邮箱|API)",
+        "(读取|复制|发送).*\\.(env|pem|key|credentials|密码|密钥|证书)",
+        "把.*(对话|聊天记录|内容).*转发",
+        "将.*(密钥|密码|token).*分享"
+      ]
+    },
+    "G_encoding_bypass": {
+      "name": "多层编码绕过",
+      "name_cn": "多层编码绕过",
+      "description": "使用 Base64/URL/Unicode 编码隐藏恶意指令",
+      "severity_base": "HIGH",
+      "patterns_en": [
+        "(?i)(echo|printf)\\s+['\"]?[A-Za-z0-9+/=]{20,}['\"]?\\s*\\|\\s*(base64|basenc).*-d.*\\|\\s*(ba)?sh",
+        "(?i)(python|perl|ruby|node)\\s+-[ce]\\s+['\"]import\\s+(base64|codecs|binascii)",
+        "(?i)eval\\s*\\(\\s*(atob|btoa|unescape|decodeURI|fromCharCode)",
+        "(?i)\\\\x[0-9a-fA-F]{2,}.*\\\\x[0-9a-fA-F]{2,}",
+        "(?i)%[0-9A-F]{2}.*(curl|wget|rm\\s+-rf|sudo|bash|sh)",
+        "(?i)\\\\u[0-9a-fA-F]{4}.*\\\\u[0-9a-fA-F]{4}"
+      ],
+      "patterns_cn": []
+    },
+    "H_delimiter_spoofing": {
+      "name": "分隔符欺骗",
+      "name_cn": "分隔符欺骗",
+      "description": "使用 XML/JSON/Markdown 标签伪装系统指令",
+      "severity_base": "HIGH",
+      "patterns_en": [
+        "<system[^>]*>.*</system>",
+        "<instruction[^>]*>.*</instruction>",
+        "<agent[^>]*>.*</agent>",
+        "\\[SYSTEM[^\\]]*\\].*\\[/SYSTEM\\]",
+        "\\[INST[^\\]]*\\].*\\[/INST\\]",
+        "\\[AGENT[^\\]]*\\].*\\[/AGENT\\]",
+        "<!--\\s*(system|instruction|command|execute|run).*-->",
+        "```(system|instruction|command)\\s*\\n.*\\n```"
+      ],
+      "patterns_cn": [
+        "<系统[^>]*>.*</系统>",
+        "<指令[^>]*>.*</指令>",
+        "\\[系统[^\\]]*\\].*\\[/系统\\]",
+        "\\[指令[^\\]]*\\].*\\[/指令\\]"
+      ]
+    }
+  },
+  "falsePositiveIndicators": {
+    "description": "当匹配上下文包含以下信号时，降低风险评级",
+    "signals": [
+      {"signal": "在教程/文档/学术论文中", "action": "降级至 MEDIUM"},
+      {"signal": "明确标注为示例/测试", "action": "降级至 LOW"},
+      {"signal": "在安全研究/渗透测试报告中", "action": "降级至 MEDIUM，标记为研究用途"},
+      {"signal": "用户主动要求执行且已通过审批门", "action": "降级至 LOW"}
+    ]
+  }
+}
