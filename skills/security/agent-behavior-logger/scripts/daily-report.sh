@@ -45,8 +45,8 @@ ERRORS=$(echo "$TODAY_DATA" | grep -c '"exit_code":[1-9]' 2>/dev/null || echo 0)
 # 平均耗时
 AVG_DURATION=0
 if [[ "$BASH" -gt 0 ]]; then
-  local durations=$(echo "$TODAY_DATA" | grep '"tool":"Bash"' | grep -o '"duration_ms":[0-9]*' | cut -d: -f2)
-  local sum=0 count=0
+  durations=$(echo "$TODAY_DATA" | grep '"tool":"Bash"' | grep -o '"duration_ms":[0-9]*' | cut -d: -f2)
+  sum=0; count=0
   for d in $durations; do
     sum=$((sum + d))
     ((count++))
