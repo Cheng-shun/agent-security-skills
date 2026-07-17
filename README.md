@@ -13,11 +13,25 @@
 
 | # | 技能 | 设计模式 | 触发时机 | 检测能力 |
 |---|------|---------|---------|---------|
-| 1 | `dangerous-command-guard` | Reviewer | Bash 执行前 | 19 种危险命令 + 6 种凭证模式 |
-| 2 | `secret-leak-prevention` | Reviewer | Write/Edit 写入前 | 27 种密钥格式 + 熵值检测 |
-| 3 | `prompt-injection-detector` | Reviewer | 🔜 即将推出 | — |
-| 4 | `dependency-audit` | Pipeline | 🔜 即将推出 | — |
-| 5 | `agent-behavior-logger` | Tool Wrapper | 🔜 即将推出 | — |
+| 1 | `dangerous-command-guard` | Reviewer | Bash 执行前 | 19 种危险命令 + 四级严重性 + OWASP 合规 |
+| 2 | `secret-leak-prevention` | Reviewer | Write/Edit 写入前 | 27 种密钥格式 + 熵值检测 + 中国平台特供 |
+| 3 | `prompt-injection-detector` | Reviewer | WebFetch/外部输入时 | 8 类注入向量 + 60+ 中英文模式 + 五层信任边界 |
+| 4 | `dependency-audit` | Pipeline | 依赖变更时 | npm/pip/cargo/go + CVE + typosquatting + 许可证审计 |
+| 5 | `agent-behavior-logger` | Tool Wrapper | 全程运行时 | 统一 JSON Schema + 跨 Skill 关联查询 + 每日报告 |
+
+> ✅ 5/5 技能已发布 · 8 个独立脚本 · 41 个真实案例 · 完整审计链路
+
+---
+
+## 防护链路
+
+```
+外部输入          命令执行          文件写入          依赖引入          全程
+    │                │                │                │              │
+    ▼                ▼                ▼                ▼              ▼
+注入检测 ──────→ 命令护栏 ──────→ 密钥扫描 ──────→ 依赖审计 ──→ 行为日志
+INJ-xxx         CRIT-xxx         SEC-xxx          DEP-xxx      统一 JSONL
+```
 
 ---
 
