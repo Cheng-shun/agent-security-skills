@@ -24,6 +24,7 @@ version: 0.1.0
 ---
 
 # Agent Behavior Logger — Agent 行为审计日志
+> 又名：行为日志
 
 **Leading word: _paper trail_**（纸面轨迹）— 不是"监控"（对抗），而是"记日记"（透明）。Agent 做的每一件事都留下一张"纸"，事后可以追溯、复盘、举证。审计不是事后追责，而是让每一次操作都经得起追问。
 

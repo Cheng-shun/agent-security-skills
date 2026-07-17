@@ -30,6 +30,7 @@ version: 0.1.0
 ---
 
 # Dangerous Command Guard — AI Agent 危险命令拦截器
+> 又名：命令护栏
 
 **Leading word: _guardrail_** — 不是"拦截器"（否定→对抗），而是"护栏"（正向→保护）。每个命令都被保护，而非被审查。
 
