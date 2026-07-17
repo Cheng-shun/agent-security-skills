@@ -1,0 +1,227 @@
+{
+  "version": "1.0.0",
+  "description": "AI Agent 危险命令模式库 — 中文优先，覆盖 Linux/macOS/Windows 三大平台",
+  "lastUpdated": "2026-07-17",
+  "patterns": [
+    {
+      "id": "CRIT-001",
+      "name": "递归根目录删除 (Unix)",
+      "severity": "CRITICAL",
+      "regex": "rm\\s+-rf\\s+/",
+      "category": "文件系统破坏",
+      "platform": ["linux", "macos"],
+      "description_cn": "递归强制删除根目录，系统立即不可恢复",
+      "safe_alternative": "无替代方案——此操作在任何情况下都不应执行"
+    },
+    {
+      "id": "CRIT-002",
+      "name": "Fork Bomb",
+      "severity": "CRITICAL",
+      "regex": ":\\s*\\(\\s*\\)\\s*\\{\\s*:\\s*\\|\\s*:",
+      "category": "系统资源耗尽",
+      "platform": ["linux", "macos"],
+      "description_cn": "无限递归创建进程，耗尽系统资源",
+      "safe_alternative": "使用 ulimit 限制进程数后再运行类似逻辑"
+    },
+    {
+      "id": "CRIT-003",
+      "name": "磁盘格式化",
+      "severity": "CRITICAL",
+      "regex": "(mkfs\\.|dd\\s+if=|format\\s+[A-Z]:)",
+      "category": "文件系统破坏",
+      "platform": ["linux", "macos", "windows"],
+      "description_cn": "格式化磁盘分区，数据永久丢失",
+      "safe_alternative": "使用虚拟机或容器隔离环境"
+    },
+    {
+      "id": "CRIT-004",
+      "name": "系统目录全量删除 (Windows)",
+      "severity": "CRITICAL",
+      "regex": "(rmdir|del|Remove-Item).*([C-Z]:\\\\|System32|WinSxS)",
+      "category": "文件系统破坏",
+      "platform": ["windows"],
+      "description_cn": "删除 Windows 系统目录，系统不可恢复",
+      "safe_alternative": "无——此操作不应在非测试环境中执行"
+    },
+    {
+      "id": "HIGH-001",
+      "name": "curl 管道执行",
+      "severity": "HIGH",
+      "regex": "(curl|wget).*\\|\\s*(ba)?sh",
+      "category": "远程代码执行",
+      "platform": ["linux", "macos"],
+      "description_cn": "从网络下载脚本并直接执行，无法验证来源安全性",
+      "safe_alternative": "先下载到文件，审查内容后再执行"
+    },
+    {
+      "id": "HIGH-002",
+      "name": "chmod 777 系统目录",
+      "severity": "HIGH",
+      "regex": "chmod\\s+(-R\\s+)?777\\s+/(etc|usr|var|opt|bin|sbin|boot)",
+      "category": "权限过度开放",
+      "platform": ["linux", "macos"],
+      "description_cn": "对系统目录开放所有人读写执行权限，严重安全隐患",
+      "safe_alternative": "使用最小权限原则，chmod 750/755"
+    },
+    {
+      "id": "HIGH-003",
+      "name": "强制推送主分支",
+      "severity": "HIGH",
+      "regex": "git\\s+push\\s+(-f|--force)",
+      "category": "代码仓库破坏",
+      "platform": ["linux", "macos", "windows"],
+      "context_check": "current_branch_in( main, master, production, release )",
+      "description_cn": "强制推送到主分支，覆盖团队代码历史",
+      "safe_alternative": "git push --force-with-lease 或推送到独立分支"
+    },
+    {
+      "id": "HIGH-004",
+      "name": "Docker 强制删除",
+      "severity": "HIGH",
+      "regex": "docker\\s+(rm|compose\\s+down)\\s+-f",
+      "category": "容器破坏",
+      "platform": ["linux", "macos", "windows"],
+      "description_cn": "强制删除运行中的容器，可能丢失数据",
+      "safe_alternative": "docker stop 后再 docker rm"
+    },
+    {
+      "id": "HIGH-005",
+      "name": "sudo 提权",
+      "severity": "HIGH",
+      "regex": "sudo\\s+",
+      "category": "权限提升",
+      "platform": ["linux", "macos"],
+      "context_check": "not previously authorized by user in this session",
+      "description_cn": "使用超级用户权限执行命令，绕过所有安全检查",
+      "safe_alternative": "明确告知用户需要 sudo 的原因，等待用户手动执行"
+    },
+    {
+      "id": "HIGH-006",
+      "name": "数据库删除操作",
+      "severity": "HIGH",
+      "regex": "(DROP\\s+(DATABASE|TABLE)|TRUNCATE)\\s+",
+      "category": "数据破坏",
+      "platform": ["linux", "macos", "windows"],
+      "description_cn": "删除数据库或表，数据不可恢复",
+      "safe_alternative": "先备份，确认备份成功后执行，事务中操作"
+    },
+    {
+      "id": "HIGH-007",
+      "name": "Kubernetes 资源删除",
+      "severity": "HIGH",
+      "regex": "kubectl\\s+delete\\s+(namespace|deployment|statefulset|pvc)",
+      "category": "基础设施破坏",
+      "platform": ["linux", "macos", "windows"],
+      "description_cn": "删除 K8s 命名空间或有状态资源，生产中断",
+      "safe_alternative": "先 kubectl get 确认资源，kubectl drain 排空节点"
+    },
+    {
+      "id": "HIGH-008",
+      "name": "Terraform 销毁",
+      "severity": "HIGH",
+      "regex": "terraform\\s+(destroy|apply\\s+-destroy)",
+      "category": "基础设施破坏",
+      "platform": ["linux", "macos", "windows"],
+      "description_cn": "销毁 Terraform 管理的所有基础设施",
+      "safe_alternative": "terraform plan -destroy 先查看影响范围"
+    },
+    {
+      "id": "MED-001",
+      "name": "递归删除项目目录",
+      "severity": "MEDIUM",
+      "regex": "rm\\s+-rf\\s+\\.(\\/|$)",
+      "category": "文件系统操作",
+      "platform": ["linux", "macos"],
+      "description_cn": "删除当前目录，可恢复但影响较大",
+      "safe_alternative": "确认当前路径正确，建议用 trash-cli 代替 rm"
+    },
+    {
+      "id": "MED-002",
+      "name": "全局 npm 安装",
+      "severity": "MEDIUM",
+      "regex": "npm\\s+(i|install)\\s+-g\\s+",
+      "category": "包管理器安全",
+      "platform": ["linux", "macos", "windows"],
+      "description_cn": "全局安装 npm 包，可能引入恶意全局脚本",
+      "safe_alternative": "优先项目本地安装，必要时在隔离环境中测试"
+    },
+    {
+      "id": "MED-003",
+      "name": "pip 全局安装",
+      "severity": "MEDIUM",
+      "regex": "pip\\d*\\s+install\\s+(?!.*--user)",
+      "category": "包管理器安全",
+      "platform": ["linux", "macos", "windows"],
+      "description_cn": "系统级 pip 安装，可能与系统包冲突",
+      "safe_alternative": "在虚拟环境或 --user 模式下安装"
+    },
+    {
+      "id": "MED-004",
+      "name": "批量删除文件",
+      "severity": "MEDIUM",
+      "regex": "(find\\s+.*-exec\\s+rm|xargs\\s+rm|Remove-Item.*-Recurse)",
+      "category": "文件系统操作",
+      "platform": ["linux", "macos", "windows"],
+      "description_cn": "批量删除文件，可能误删重要文件",
+      "safe_alternative": "先用 find/ls 预览文件列表，确认后再执行"
+    },
+    {
+      "id": "MED-005",
+      "name": "SSH 密钥目录操作",
+      "severity": "MEDIUM",
+      "regex": "(cat|echo|cp|mv).*~\\/\\.ssh\\/",
+      "category": "凭证安全",
+      "platform": ["linux", "macos"],
+      "description_cn": "读写 SSH 密钥目录，可能泄露或损坏密钥",
+      "safe_alternative": "使用 ssh-keygen 管理密钥，避免手动操作"
+    },
+    {
+      "id": "LOW-001",
+      "name": "环境变量文件读取",
+      "severity": "LOW",
+      "regex": "cat\\s+\\.env",
+      "category": "信息泄露",
+      "platform": ["linux", "macos", "windows"],
+      "description_cn": "读取 .env 文件，内容可能包含密钥",
+      "safe_alternative": "仅在需要时读取，不将输出重定向到外部"
+    },
+    {
+      "id": "LOW-002",
+      "name": "Git reset hard",
+      "severity": "LOW",
+      "regex": "git\\s+reset\\s+--hard",
+      "category": "版本控制操作",
+      "platform": ["linux", "macos", "windows"],
+      "description_cn": "硬重置丢弃未提交更改，可恢复但麻烦",
+      "safe_alternative": "git stash 先暂存，确认后再 git reset"
+    }
+  ],
+
+  "credentialPatterns": {
+    "description": "凭证泄露检测模式（软检查，不直接拦截但会警告）",
+    "patterns": [
+      {"name": "GitHub Token", "regex": "ghp_[A-Za-z0-9]{36}"},
+      {"name": "GitHub Token (new)", "regex": "github_pat_[A-Za-z0-9_]{36,}"},
+      {"name": "OpenAI API Key", "regex": "sk-[A-Za-z0-9]{32,}"},
+      {"name": "AWS Access Key", "regex": "AKIA[0-9A-Z]{16}"},
+      {"name": "AWS Secret Key", "regex": "[0-9a-zA-Z/+]{40}"},
+      {"name": "Generic API Key", "regex": "(api[_-]?key|apikey|secret|token|password)\\s*[=:]\\s*['\"]?[^'\"\\s]{8,}['\"]?", "case_insensitive": true}
+    ]
+  },
+
+  "contextChecks": {
+    "description": "需要结合运行时上下文判断的模式",
+    "git_push_force_main": {
+      "command": "git push --force",
+      "check": "current_branch == 'main' || current_branch == 'master'",
+      "severity_if_match": "HIGH",
+      "severity_otherwise": "LOW"
+    },
+    "rm_in_project_root": {
+      "command": "rm -rf",
+      "check": "working_directory == git_root",
+      "severity_if_match": "MEDIUM",
+      "severity_otherwise": "LOW"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Claude Code logs
+*.jsonl
+logs/
